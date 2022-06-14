@@ -1,0 +1,3 @@
+build:
+  docker:
+    internal_web: Dockerfile.InternalWeb
