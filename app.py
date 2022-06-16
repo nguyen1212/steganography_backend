@@ -36,6 +36,16 @@ def encrypt():
   
   return jsonify()
 
+@app.route("/api/v1/test", methods=["POST"])
+def test():
+  key = request.form['key']
+  text = request.form['text']
+
+  return jsonify({
+    'text': text,
+    'key': key
+  })
+
 @app.route("/api/v1/decrypt", methods=['POST'])
 def decrypt():
   file = request.files['file']
