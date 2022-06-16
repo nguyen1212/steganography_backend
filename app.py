@@ -76,9 +76,15 @@ def decrypt():
 
     decrypted_text = encryptor.decryptAES(key, msg)
 
-    response = jsonify({
-      'text': decrypted_text
-    })
+    if decrypted_text != None:
+      response = jsonify({
+        'text': decrypted_text
+      })
+    else:
+      response = Response(
+        "We can't decrypt any message with the key provided",
+        status=400,
+      )
     
     return response
   

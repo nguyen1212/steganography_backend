@@ -1,4 +1,5 @@
 import base64
+from tkinter import IntVar
 from Crypto.Cipher import AES
 from Crypto.Hash import SHA256
 from Crypto import Random
@@ -39,10 +40,10 @@ def decryptAES(key, text):
     text = text.encode()
     text = base64.b64decode(text)
     key = SHA256.new(key).digest()  # Use SHA-256 over our key to get a proper-sized AES key
-    IV = text[:AES.block_size]  # Extract the IV from the beginning
-    decryptor = AES.new(key, AES.MODE_CBC, IV)
+    iv = text[:AES.block_size]  # Extract the IV from the beginning
+    decryptor = AES.new(key, AES.MODE_CBC, iv)
     data = decryptor.decrypt(text[AES.block_size:])  # decrypt
     padding = data[-1]  # Pick the padding value from the end; Python 2.x: ord(data[-1])
     if data[-padding:] != bytes([padding]) * padding:
-        raise ValueError("Invalid padding...")
+        return None
     return data[:-padding].decode()  # Remove the padding and decode
