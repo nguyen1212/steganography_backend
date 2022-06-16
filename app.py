@@ -20,8 +20,10 @@ def encrypt():
     file_name= filename.split('.')[0]
 
     file.save(filepath)
-
-    encrypted_text = encryptor.encryptAES(key, text)
+    if key != "":
+      encrypted_text = encryptor.encryptAES(key, text)
+    else:
+      encrypted_text = text
 
     img = cv2.imread(filepath, 1)
     
@@ -74,7 +76,10 @@ def decrypt():
     bit = converter.extract(img[:,:,0], hsi)
     msg = converter.toString(bit)
 
-    decrypted_text = encryptor.decryptAES(key, msg)
+    if key != "":
+      decrypted_text = encryptor.decryptAES(key, msg)
+    else:
+      decrypted_text = msg
 
     if decrypted_text != None:
       response = jsonify({
