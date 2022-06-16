@@ -25,10 +25,9 @@ def encrypt():
 
     bit = converter.toBinary(text)
     hsi = converter.rgbToHSI(img, img.shape)
-    iPlane = hsi[:,:,2]
-    secret_msg = converter.genMsg(bit, iPlane.shape)
-    stego = converter.embed(hsi, secret_msg)
-    newfile = converter.hsiToRGB(stego, stego.shape)
+    secret_msg = converter.genMsg(bit)
+    stego, brokenPixelIndexList, pixelIndexList = converter.embed(hsi, secret_msg)
+    newfile = converter.setFlag(stego, brokenPixelIndexList, pixelIndexList)
     newfile_path =f'{app.instance_path}/{file_name}_encrypted.png'
     cv2.imwrite(newfile_path, newfile)
     
@@ -59,7 +58,7 @@ def decrypt():
     img = cv2.imread(filepath, 1)
 
     hsi = converter.rgbToHSI(img, img.shape)
-    bit = converter.extract(hsi)
+    bit = converter.extract(img[:,:,0], hsi)
     msg = converter.toString(bit)
 
     response = jsonify({
