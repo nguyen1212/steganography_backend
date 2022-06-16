@@ -1,8 +1,10 @@
 from flask import jsonify, Flask, request, send_file
+from flask_cors import CORS
 import os, cv2, converter
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
 
 path = os.getcwd()
 
