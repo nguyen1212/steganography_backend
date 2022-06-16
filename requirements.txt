@@ -1,4 +1,5 @@
 Flask==2.0.2
+flask_cors==3.0.10
 opencv-python-headless==4.6.0.66
 numpy==1.21.4
 unicorn[standard]
