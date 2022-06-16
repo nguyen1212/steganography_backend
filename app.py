@@ -4,7 +4,7 @@ import os, cv2, converter
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
+CORS(app, resources={r"*": {"origins": "*"}})
 
 path = os.getcwd()
 
