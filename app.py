@@ -1,6 +1,6 @@
 from flask import jsonify, Flask, request, send_file
 from flask_cors import CORS
-import os, cv2, converter
+import os, cv2, converter, encryptor
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
