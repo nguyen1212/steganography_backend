@@ -1,4 +1,4 @@
-from flask import jsonify, Flask, request, send_file
+from flask import jsonify, Flask, request, send_file, Response, json
 from flask_cors import CORS
 import os, cv2, converter
 from werkzeug.utils import secure_filename
@@ -25,7 +25,14 @@ def encrypt():
 
     bit = converter.toBinary(text)
     hsi = converter.rgbToHSI(img, img.shape)
+    
     secret_msg = converter.genMsg(bit)
+    if len(secret_msg) > 0.4 * img.shape[0] * img.shape[1]:
+      return Response(
+        "cover image is not enough",
+        status=400,
+      )
+
     stego, brokenPixelIndexList, pixelIndexList = converter.embed(hsi, secret_msg)
     newfile = converter.setFlag(stego, brokenPixelIndexList, pixelIndexList)
     newfile_path =f'{app.instance_path}/{file_name}_encrypted.png'
@@ -33,7 +40,10 @@ def encrypt():
     
     return send_file(newfile_path, mimetype='image/png')
   
-  return jsonify()
+  return Response(
+    "unsupported file",
+    status=400,
+  )
 
 @app.route("/api/v1/test", methods=["POST"])
 def test():
@@ -49,6 +59,7 @@ def test():
 def decrypt():
   file = request.files['file']
   key = request.form['key']
+
   if file:
     filename = secure_filename(file.filename)
     filepath = os.path.join(app.instance_path, filename)
@@ -66,6 +77,11 @@ def decrypt():
     })
     
     return response
+  
+  return Response(
+    "unsupported file",
+    status=400,
+  )
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=40002)
