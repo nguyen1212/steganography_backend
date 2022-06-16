@@ -1,6 +1,6 @@
 from flask import jsonify, Flask, request, send_file, Response, json
 from flask_cors import CORS
-import os, cv2, converter
+import os, cv2, converter, encryptor
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
@@ -21,9 +21,11 @@ def encrypt():
 
     file.save(filepath)
 
-    img = cv2.imread(filepath, 1)
+    encrypted_text = encryptor.encryptAES(key, text)
 
-    bit = converter.toBinary(text)
+    img = cv2.imread(filepath, 1)
+    
+    bit = converter.toBinary(encrypted_text)
     hsi = converter.rgbToHSI(img, img.shape)
     
     secret_msg = converter.genMsg(bit)
@@ -72,8 +74,10 @@ def decrypt():
     bit = converter.extract(img[:,:,0], hsi)
     msg = converter.toString(bit)
 
+    decrypted_text = encryptor.decryptAES(key, msg)
+
     response = jsonify({
-      'text': msg
+      'text': decrypted_text
     })
     
     return response
