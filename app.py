@@ -32,22 +32,28 @@ def encrypt():
     
     secret_msg = converter.genMsg(bit)
     if len(secret_msg) > 0.4 * img.shape[0] * img.shape[1]:
-      return Response(
+      response = Response(
         "cover image is not enough",
         status=400,
       )
+      response.headers.add('Access-Control-Allow-Origin', '*')
+      return response
 
     stego, brokenPixelIndexList, pixelIndexList = converter.embed(hsi, secret_msg)
     newfile = converter.setFlag(stego, brokenPixelIndexList, pixelIndexList)
     newfile_path =f'{app.instance_path}/{file_name}_encrypted.png'
     cv2.imwrite(newfile_path, newfile)
     
-    return send_file(newfile_path, mimetype='image/png')
+    response = send_file(newfile_path, mimetype='image/png')
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
   
-  return Response(
+  response = Response(
     "unsupported file",
     status=400,
   )
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  return response
 
 @app.route("/api/v1/test", methods=["POST"])
 def test():
@@ -63,6 +69,7 @@ def test():
 def decrypt():
   file = request.files['file']
   key = request.form['key']
+  response = Response
 
   if file:
     filename = secure_filename(file.filename)
@@ -82,21 +89,23 @@ def decrypt():
       decrypted_text = msg
 
     if decrypted_text != None:
-      response = jsonify({
+      response = Response(json.dumps({
         'text': decrypted_text
-      })
+      }))
     else:
       response = Response(
         "We can't decrypt any message with the key provided",
         status=400,
       )
     
+    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
   
-  return Response(
+  response = Response(
     "unsupported file",
     status=400,
   )
-
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  return response
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=40002)
